@@ -4,11 +4,19 @@ import Image from "next/image";
 import Banner from "../components/banner";
 import Card from "../components/card";
 
-import coffeeStores from "/data/coffee-stores.json";
+import coffeeStoresData from "/data/coffee-stores.json";
 
 import styles from "../styles/Home.module.css";
 
-export default function Home() {
+export async function getStaticProps(context) {
+  return {
+    props: {
+      coffeeStores: coffeeStoresData,
+    }, // will be passed to the page component as props
+  };
+}
+
+export default function Home(props) {
   const handleOnBannerBtnClick = () => {
     console.log("hi banner button");
   };
@@ -34,18 +42,24 @@ export default function Home() {
           />
         </div>
 
-        <div className={styles.cardLayout}>
-          {coffeeStores.map((coffeeStore) => {
-            return (
-              <Card
-                className={styles.card}
-                name={coffeeStore.name}
-                imgUrl={coffeeStore.imgUrl}
-                href={`/coffee-store/${coffeeStore.id}`}
-              />
-            );
-          })}
-        </div>
+        {props.coffeeStores.length > 0 && (
+          <>
+            <h2 className={styles.heading2}>Toronto stores</h2>
+            <div className={styles.cardLayout}>
+              {props.coffeeStores.map((coffeeStore) => {
+                return (
+                  <Card
+                    key={coffeeStore.id}
+                    className={styles.card}
+                    name={coffeeStore.name}
+                    imgUrl={coffeeStore.imgUrl}
+                    href={`/coffee-store/${coffeeStore.id}`}
+                  />
+                );
+              })}
+            </div>
+          </>
+        )}
       </main>
     </div>
   );
